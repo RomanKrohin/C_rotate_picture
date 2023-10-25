@@ -1,8 +1,7 @@
 #include "RotatePicture.h"
 #include <stdlib.h> 
 
-struct image rotate(struct image const source)
-{
+struct image rotate(struct image const source){
     struct image rotated_img = (struct image){.width = source.width, .height = source.height};
     rotated_img.data = (struct pixel*)malloc(sizeof(struct pixel) * rotated_img.width * rotated_img.height);
 
