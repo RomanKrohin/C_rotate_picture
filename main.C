@@ -50,15 +50,8 @@ enum read_status  {
   };
 
 enum read_status from_bmp( FILE* in, struct image* img ){
-
     if (in == NULL){
         return READ_INVALID_SIGNATURE;
-    }
-    
-    img -> data = (struct pixel*) malloc (sizeof(struct pixel) * img -> width * img -> height);  
-
-    if (img->data == NULL) {
-        return READ_INVALID_BITS;
     }
 
     size_t bytesRead = fread(&bmp_header, sizeof(bmp_header), 1, in);
@@ -68,6 +61,12 @@ enum read_status from_bmp( FILE* in, struct image* img ){
 
     img -> height = (uint16_t) bmp_header.biHeight;
     img -> width = (uint16_t) bmp_header.biWidth;
+    
+    img -> data = (struct pixel*) malloc (sizeof(struct pixel) * img -> width * img -> height);  
+
+    if (img->data == NULL) {
+        return READ_INVALID_BITS;
+    }
 
 
     fseek(in, bmp_header.bOffBits, SEEK_SET);
@@ -92,7 +91,7 @@ enum read_status from_bmp( FILE* in, struct image* img ){
 
 struct image rotate(struct image const source){
 
-    struct image rotated_img {.width = source.width, .height = source.height};
+    struct image rotated_img =  (struct image) {.width = source.width, .height = source.height};
 
     rotated_img.data = (struct pixel*)malloc(sizeof(struct pixel) * rotated_img.width * rotated_img.height);
 
@@ -138,13 +137,29 @@ enum write_status to_bmp( FILE* out, struct image const* img ){
         }
 
         unsigned int padding = (4 - (img->width * 3) % 4) % 4;
-        if (padding != 0) {
-            uint8_t dummy = 0;
-            fwrite(&dummy, sizeof(uint8_t), padding, out);
-        }
+        uint8_t dummy = 0;
+        fwrite(&dummy, sizeof(uint8_t), padding, out);
     }
+
+    free(img -> data);
 
     return WRITE_OK;
 };
 
 //------- TO BMP -------
+
+int main(){
+    struct image* img =  (struct image*) malloc(sizeof(struct image));
+    FILE* file1 = fopen("image1.bmp", "rb"); 
+    FILE* file2 = fopen("image2.bmp", "wb"); 
+    if (from_bmp(file1, img)==READ_OK){
+        *img = rotate(*img);
+       if (to_bmp(file2, img)==WRITE_OK){
+            printf("zoebis");
+        }
+    };
+    fclose(file1);
+    fclose(file2);
+    free(img);
+    return 0;
+}
