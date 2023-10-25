@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "BMPHeader.C": "cpp",
+        "main.C": "cpp",
+        "*.С": "cpp"
+    }
+}
