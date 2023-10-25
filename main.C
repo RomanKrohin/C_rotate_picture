@@ -155,7 +155,7 @@ int main(){
     if (from_bmp(file1, img)==READ_OK){
         *img = rotate(*img);
        if (to_bmp(file2, img)==WRITE_OK){
-            printf("zoebis");
+            printf("Success");
         }
     };
     fclose(file1);
