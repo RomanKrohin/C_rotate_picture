@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include "Image.h"
 #include "BMPHeader.h"
-#include "DeserializeFromBMP.h"
+#include "ToFromBMP.h"
 
 enum read_status from_bmp(FILE* in, struct image* img)
 {
@@ -22,7 +22,7 @@ enum read_status from_bmp(FILE* in, struct image* img)
     img->width = bmp_header_local.biWidth;
 
     uint32_t rowSize = (img->width * sizeof(struct pixel));
-    uint32_t paddingSize = (4 - (rowSize % 4)) % 4;
+    uint32_t paddingSize = rowSize % 4;
     img->data = (struct pixel*)malloc(sizeof(struct pixel) * img->width * img->height);
 
     if (img->data == NULL)
@@ -59,7 +59,7 @@ enum write_status to_bmp(FILE* out, struct image const* img)
     fwrite(&bmp_header_local, sizeof(struct bmp_header), 1, out);
 
     uint32_t rowSize = (img->width * sizeof(struct pixel));
-    uint32_t paddingSize = (4 - (rowSize % 4)) % 4;
+    uint32_t paddingSize = rowSize % 4;
 
     for (uint16_t y = 0; y < img->height; y++){
         for (uint16_t x = 0; x < img->width; x++){
