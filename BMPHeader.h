@@ -26,4 +26,6 @@ struct bmp_header
 
 struct bmp_header bmp_header_local;
 
+int buffer;
+
 #endif

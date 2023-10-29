@@ -30,7 +30,19 @@ enum read_status from_bmp(FILE* in, struct image* img)
         return READ_INVALID_BITS;
     }
 
+    int64_t buf;
+
+    buf = bmp_header_local.biWidth;
+    bmp_header_local.biWidth = bmp_header_local.biHeight;
+    bmp_header_local.biHeight = buf;
+
+    buf = bmp_header_local.biXPelsPerMeter;
+    bmp_header_local.biXPelsPerMeter = bmp_header_local.biYPelsPerMeter;
+    bmp_header_local.biYPelsPerMeter = buf;
+
     fseek(in, bmp_header_local.bOffBits, SEEK_SET);
+
+    buffer = bmp_header_local.bOffBits - 54;
 
     for (uint16_t y = 0; y < img->height; y++)
     {
@@ -55,12 +67,11 @@ enum write_status to_bmp(FILE* out, struct image const* img)
     {
         return WRITE_ERROR;
     }
-
-    fwrite(&bmp_header_local, sizeof(struct bmp_header), 1, out);
-
+    
+    fwrite(&bmp_header_local, sizeof(struct bmp_header)+buffer, 1, out);
     uint32_t rowSize = (img->width * sizeof(struct pixel));
     uint32_t paddingSize = rowSize % 4;
-
+    
     for (uint16_t y = 0; y < img->height; y++){
         for (uint16_t x = 0; x < img->width; x++){
             struct pixel pixel = img->data[y * img->width + x];
@@ -71,7 +82,7 @@ enum write_status to_bmp(FILE* out, struct image const* img)
 
         for (uint32_t i = 0; i < paddingSize; i++)
         {
-            uint8_t dummy = 0;
+            uint8_t dummy = 8;
             fwrite(&dummy, sizeof(uint8_t), 1, out);
         }
     }
