@@ -3,19 +3,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int main(int argc, char* argv[]){
-    struct image* img =  (struct image*) malloc(sizeof(struct image));
-    FILE* file1 = fopen(argv[1], "rb"); 
-    FILE* file2 = fopen(argv[2], "wb"); 
+int main(int argc, char** argv){
+        struct image img =(struct image){ .width=0, .height=0};
+        FILE* file1 = (FILE*)fopen(argv[1], "rb"); 
+        FILE* file2 = (FILE*)fopen(argv[2], "wb"); 
 
-    if (from_bmp(file1, img) == READ_OK){
-        *img = rotate(*img);
-        if (to_bmp(file2, img) == WRITE_OK){
-            printf("Success");
+        if (from_bmp(file1, &img) == READ_OK){
+            struct image imgRotated = rotate(img);
+            if (to_bmp(file2, &imgRotated) == WRITE_OK){
+                printf("Success");
+            }
         }
-    }
-    fclose(file1);
-    fclose(file2);
-    free(img);
+        fclose(file1);
+        fclose(file2);
     return 0;
 }

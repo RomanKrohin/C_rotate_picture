@@ -18,7 +18,7 @@ enum write_status {
     /* коды других ошибок  */
 };
 
-enum write_status to_bmp(FILE* out, const struct image* img);
+enum write_status to_bmp(FILE* out, struct image* img);
 
 enum read_status from_bmp(FILE* in, struct image* img);
 

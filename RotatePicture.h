@@ -3,6 +3,6 @@
 
 #include "Image.h"
 
-struct image rotate(struct image img);
+struct image rotate(struct image source);
 
 #endif
